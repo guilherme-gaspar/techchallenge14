@@ -1,0 +1,6 @@
+services:
+  app:
+    image: techchallenge14-app
+    build: .
+    ports:
+      - "8080:8080"
