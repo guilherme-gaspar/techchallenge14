@@ -1,0 +1,28 @@
+package com.fiap.techchallenge14.login.service;
+
+import com.fiap.techchallenge14.login.dto.LoginRequestDTO;
+import com.fiap.techchallenge14.login.storage.TokenStorage;
+import com.fiap.techchallenge14.user.model.User;
+import com.fiap.techchallenge14.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class LoginService {
+
+    private final UserRepository userRepository;
+
+    public String login(LoginRequestDTO loginRequest) {
+        User user = userRepository.findByUsernameAndPassword(loginRequest.getUsername(), loginRequest.getPassword())
+                .orElseThrow(() -> new RuntimeException("Login ou senha inválidos"));
+
+        String token = UUID.randomUUID().toString();
+        TokenStorage.saveToken(token, user.getId());
+        return token;
+    }
+
+}
+
