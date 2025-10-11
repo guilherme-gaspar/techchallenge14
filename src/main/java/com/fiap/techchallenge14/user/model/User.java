@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users")
 @Data
@@ -20,4 +22,15 @@ public class User {
     private String email;
     private String username;
     private String password;
+    private LocalDateTime createdAt;
+    private LocalDateTime lastUpdatedAt;
+    private LocalDateTime lastLoginAt;
+    private Boolean active;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.active = true;
+    }
+
 }
