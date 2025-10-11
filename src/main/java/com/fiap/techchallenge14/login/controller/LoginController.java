@@ -1,6 +1,7 @@
 package com.fiap.techchallenge14.login.controller;
 
 import com.fiap.techchallenge14.login.dto.LoginRequestDTO;
+import com.fiap.techchallenge14.login.dto.LoginResponseDTO;
 import com.fiap.techchallenge14.login.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +18,8 @@ public class LoginController {
     private final LoginService loginService;
 
     @PostMapping
-    public ResponseEntity<String> login(@RequestBody LoginRequestDTO loginRequest) {
-        String token = loginService.login(loginRequest);
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequest) {
+        LoginResponseDTO token = loginService.login(loginRequest);
         return ResponseEntity.ok(token);
     }
 }
