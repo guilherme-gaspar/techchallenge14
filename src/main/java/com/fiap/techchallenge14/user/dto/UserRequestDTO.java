@@ -1,6 +1,7 @@
 package com.fiap.techchallenge14.user.dto;
 
 import com.fiap.techchallenge14.role.validation.RoleExists;
+import com.fiap.techchallenge14.user.validation.UniqueEmail;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,6 +14,7 @@ public record UserRequestDTO(
 
         @NotBlank(message = "O e-mail é obrigatório")
         @Email(message = "Formato de e-mail inválido")
+        @UniqueEmail
         String email,
 
         @NotBlank(message = "A senha é obrigatória")

@@ -1,6 +1,5 @@
 package com.fiap.techchallenge14.user.service;
 
-import com.fiap.techchallenge14.exception.EmailAlreadyExistsException;
 import com.fiap.techchallenge14.exception.UserException;
 import com.fiap.techchallenge14.role.model.Role;
 import com.fiap.techchallenge14.role.repository.RoleRepository;
@@ -28,8 +27,6 @@ public class UserService {
 
     @Transactional
     public UserResponseDTO save(UserRequestDTO dto) {
-        validateEmailUniqueness(dto.email());
-
         User user = buildUserFromDTO(dto);
         Role role = roleRepository.getReferenceById(dto.roleId());
         user.setRole(role);
@@ -63,10 +60,6 @@ public class UserService {
     public UserResponseDTO update(Long id, UserRequestDTO dto) {
         User user = getUserById(id);
 
-        if (!user.getEmail().equals(dto.email())) {
-            validateEmailUniqueness(dto.email());
-        }
-
         updateUserFromDTO(user, dto);
         Role role = roleRepository.getReferenceById(dto.roleId());
         user.setRole(role);
@@ -96,12 +89,6 @@ public class UserService {
     private User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserException("User not found with ID: " + id));
-    }
-
-    private void validateEmailUniqueness(String email) {
-        if (userRepository.findByEmail(email).isPresent()) {
-            throw new EmailAlreadyExistsException(email);
-        }
     }
 
     private User buildUserFromDTO(UserRequestDTO dto) {

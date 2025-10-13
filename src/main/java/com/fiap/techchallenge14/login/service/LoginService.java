@@ -21,21 +21,13 @@ public class LoginService {
     private final UserRepository userRepository;
 
     public LoginResponseDTO login(LoginRequestDTO loginRequest) {
-        validateLoginRequest(loginRequest);
-
-        User user = authenticate(loginRequest.getEmail(), loginRequest.getPassword());
+        User user = authenticate(loginRequest.email(), loginRequest.password());
 
         updateLastLogin(user);
 
         String token = generateToken(user);
 
-        return buildLoginResponse(token);
-    }
-
-    private void validateLoginRequest(LoginRequestDTO request) {
-        if (request.getEmail() == null || request.getPassword() == null) {
-            throw new LoginException("Usuário e senha são obrigatórios");
-        }
+        return new LoginResponseDTO(token);
     }
 
     private User authenticate(String username, String password) {
@@ -54,11 +46,5 @@ public class LoginService {
         String token = UUID.randomUUID().toString();
         TokenStorage.saveToken(token, user.getId());
         return token;
-    }
-
-    private LoginResponseDTO buildLoginResponse(String token) {
-        return LoginResponseDTO.builder()
-                .token(token)
-                .build();
     }
 }
