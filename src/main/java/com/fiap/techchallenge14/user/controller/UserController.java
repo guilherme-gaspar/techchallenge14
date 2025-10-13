@@ -1,6 +1,5 @@
 package com.fiap.techchallenge14.user.controller;
 
-import com.fiap.techchallenge14.login.storage.TokenStorage;
 import com.fiap.techchallenge14.user.dto.UserRequestDTO;
 import com.fiap.techchallenge14.user.dto.UserResponseDTO;
 import com.fiap.techchallenge14.user.service.UserService;
@@ -26,14 +25,11 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDTO> updateUser(
-            @RequestHeader("Authorization") String token,
             @PathVariable Long id,
             @RequestBody UserRequestDTO userRequestDTO) {
-        if (!TokenStorage.isTokenValid(token)) {
-            return ResponseEntity.status(401).build();
-        }
-        UserResponseDTO updated = userService.update(id, userRequestDTO);
-        return ResponseEntity.ok(updated);
+
+        UserResponseDTO updatedUser = userService.update(id, userRequestDTO);
+        return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/{id}")
@@ -44,9 +40,10 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> getUsers(@RequestParam(required = false) String name) {
-        if (name != null && !name.trim().isEmpty()) {
-            return ResponseEntity.ok(userService.findUserByName(name));
-        }
-        return ResponseEntity.ok(userService.findAll());
+        List<UserResponseDTO> users = (name != null && !name.trim().isEmpty())
+                ? userService.findUserByName(name)
+                : userService.findAll();
+
+        return ResponseEntity.ok(users);
     }
 }
