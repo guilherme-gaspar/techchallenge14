@@ -21,25 +21,17 @@ public class LoginService {
     private final UserRepository userRepository;
 
     public LoginResponseDTO login(LoginRequestDTO loginRequest) {
-        validateLoginRequest(loginRequest);
-
-        User user = authenticate(loginRequest.getUsername(), loginRequest.getPassword());
+        User user = authenticate(loginRequest.email(), loginRequest.password());
 
         updateLastLogin(user);
 
         String token = generateToken(user);
 
-        return buildLoginResponse(token);
-    }
-
-    private void validateLoginRequest(LoginRequestDTO request) {
-        if (request.getUsername() == null || request.getPassword() == null) {
-            throw new LoginException("Usuário e senha são obrigatórios");
-        }
+        return new LoginResponseDTO(token);
     }
 
     private User authenticate(String username, String password) {
-        return userRepository.findByUsernameAndPassword(username, password)
+        return userRepository.findByEmailAndPassword(username, password)
                 .filter(User::getActive)
                 .orElseThrow(() -> new LoginException("Login ou senha inválidos"));
     }
@@ -47,18 +39,12 @@ public class LoginService {
     private void updateLastLogin(User user) {
         user.setLastLoginAt(LocalDateTime.now());
         userRepository.save(user);
-        log.info("Usuário {} fez login em {}", user.getUsername(), user.getLastLoginAt());
+        log.info("Usuário {} fez login em {}", user.getName(), user.getLastLoginAt());
     }
 
     private String generateToken(User user) {
         String token = UUID.randomUUID().toString();
         TokenStorage.saveToken(token, user.getId());
         return token;
-    }
-
-    private LoginResponseDTO buildLoginResponse(String token) {
-        return LoginResponseDTO.builder()
-                .token(token)
-                .build();
     }
 }

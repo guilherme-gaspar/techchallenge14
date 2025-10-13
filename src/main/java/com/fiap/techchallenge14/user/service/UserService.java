@@ -1,7 +1,8 @@
 package com.fiap.techchallenge14.user.service;
 
-import com.fiap.techchallenge14.exception.EmailAlreadyExistsException;
 import com.fiap.techchallenge14.exception.UserException;
+import com.fiap.techchallenge14.role.model.Role;
+import com.fiap.techchallenge14.role.repository.RoleRepository;
 import com.fiap.techchallenge14.user.dto.UserRequestDTO;
 import com.fiap.techchallenge14.user.dto.UserResponseDTO;
 import com.fiap.techchallenge14.user.mapper.UserMapper;
@@ -21,13 +22,14 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final UserMapper userMapper;
 
     @Transactional
     public UserResponseDTO save(UserRequestDTO dto) {
-        validateEmailUniqueness(dto.getEmail());
-
         User user = buildUserFromDTO(dto);
+        Role role = roleRepository.getReferenceById(dto.roleId());
+        user.setRole(role);
         User savedUser = userRepository.save(user);
         log.info("User created with ID: {}", savedUser.getId());
 
@@ -58,11 +60,9 @@ public class UserService {
     public UserResponseDTO update(Long id, UserRequestDTO dto) {
         User user = getUserById(id);
 
-        if (!user.getEmail().equals(dto.getEmail())) {
-            validateEmailUniqueness(dto.getEmail());
-        }
-
         updateUserFromDTO(user, dto);
+        Role role = roleRepository.getReferenceById(dto.roleId());
+        user.setRole(role);
         user.setLastUpdatedAt(LocalDateTime.now());
 
         User updatedUser = userRepository.save(user);
@@ -91,12 +91,6 @@ public class UserService {
                 .orElseThrow(() -> new UserException("User not found with ID: " + id));
     }
 
-    private void validateEmailUniqueness(String email) {
-        if (userRepository.findByEmail(email).isPresent()) {
-            throw new EmailAlreadyExistsException(email);
-        }
-    }
-
     private User buildUserFromDTO(UserRequestDTO dto) {
         User user = new User();
         updateUserFromDTO(user, dto);
@@ -104,10 +98,8 @@ public class UserService {
     }
 
     private void updateUserFromDTO(User user, UserRequestDTO dto) {
-        user.setName(dto.getName());
-        user.setEmail(dto.getEmail());
-        user.setPassword(dto.getPassword());
-        user.setUsername(dto.getUsername());
-        user.setLastUpdatedAt(LocalDateTime.now());
+        user.setName(dto.name());
+        user.setEmail(dto.email());
+        user.setPassword(dto.password());
     }
 }

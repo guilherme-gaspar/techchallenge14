@@ -16,7 +16,7 @@ import java.io.IOException;
 public class TokenAuthFilter extends OncePerRequestFilter {
 
     private static final String AUTH_HEADER = "Authorization";
-    private static final String USERS_ENDPOINT = "/v1/api/users";
+    private static final String USERS_ENDPOINT = "/v1/users";
     private static final String LOGIN_ENDPOINT = "/v1/login";
 
     @Override
