@@ -21,6 +21,10 @@ public record UserCreateRequestDTO(
         @Size(min = 6, max = 100, message = "A senha deve ter entre 6 e 100 caracteres")
         String password,
 
+        @NotBlank(message = "O endereco é obrigatório")
+        @Size(min = 3, max = 100, message = "O endereco deve ter entre 3 e 100 caracteres")
+        String address,
+
         @NotNull
         @RoleExists
         Long roleId
