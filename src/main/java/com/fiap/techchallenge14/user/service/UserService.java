@@ -3,8 +3,9 @@ package com.fiap.techchallenge14.user.service;
 import com.fiap.techchallenge14.exception.UserException;
 import com.fiap.techchallenge14.role.model.Role;
 import com.fiap.techchallenge14.role.repository.RoleRepository;
-import com.fiap.techchallenge14.user.dto.UserRequestDTO;
+import com.fiap.techchallenge14.user.dto.UserCreateRequestDTO;
 import com.fiap.techchallenge14.user.dto.UserResponseDTO;
+import com.fiap.techchallenge14.user.dto.UserUpdateRequestDTO;
 import com.fiap.techchallenge14.user.mapper.UserMapper;
 import com.fiap.techchallenge14.user.model.User;
 import com.fiap.techchallenge14.user.repository.UserRepository;
@@ -13,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -26,10 +26,12 @@ public class UserService {
     private final UserMapper userMapper;
 
     @Transactional
-    public UserResponseDTO save(UserRequestDTO dto) {
-        User user = buildUserFromDTO(dto);
+    public UserResponseDTO save(UserCreateRequestDTO dto) {
+        User user = userMapper.toEntity(dto);
+
         Role role = roleRepository.getReferenceById(dto.roleId());
         user.setRole(role);
+
         User savedUser = userRepository.save(user);
         log.info("User created with ID: {}", savedUser.getId());
 
@@ -57,13 +59,13 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDTO update(Long id, UserRequestDTO dto) {
+    public UserResponseDTO update(Long id, UserUpdateRequestDTO dto) {
         User user = getUserById(id);
 
-        updateUserFromDTO(user, dto);
+        userMapper.updateEntityFromDto(dto, user);
+
         Role role = roleRepository.getReferenceById(dto.roleId());
         user.setRole(role);
-        user.setLastUpdatedAt(LocalDateTime.now());
 
         User updatedUser = userRepository.save(user);
         log.info("User updated with ID: {}", updatedUser.getId());
@@ -98,17 +100,5 @@ public class UserService {
 
         userRepository.save(user);
         log.info("Password updated for user with ID: {}", id);
-    }
-
-    private User buildUserFromDTO(UserRequestDTO dto) {
-        User user = new User();
-        updateUserFromDTO(user, dto);
-        return user;
-    }
-
-    private void updateUserFromDTO(User user, UserRequestDTO dto) {
-        user.setName(dto.name());
-        user.setEmail(dto.email());
-        user.setPassword(dto.password());
     }
 }
