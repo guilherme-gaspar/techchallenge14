@@ -91,6 +91,15 @@ public class UserService {
                 .orElseThrow(() -> new UserException("User not found with ID: " + id));
     }
 
+    @Transactional
+    public void changePassword(Long id, String newPassword) {
+        User user = getUserById(id);
+        user.setPassword(newPassword);
+
+        userRepository.save(user);
+        log.info("Password updated for user with ID: {}", id);
+    }
+
     private User buildUserFromDTO(UserRequestDTO dto) {
         User user = new User();
         updateUserFromDTO(user, dto);

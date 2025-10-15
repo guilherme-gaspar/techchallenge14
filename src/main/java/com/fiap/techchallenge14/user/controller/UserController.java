@@ -1,5 +1,6 @@
 package com.fiap.techchallenge14.user.controller;
 
+import com.fiap.techchallenge14.user.dto.PasswordChangeRequestDTO;
 import com.fiap.techchallenge14.user.dto.UserRequestDTO;
 import com.fiap.techchallenge14.user.dto.UserResponseDTO;
 import com.fiap.techchallenge14.user.service.UserService;
@@ -46,5 +47,14 @@ public class UserController {
                 : userService.findAll();
 
         return ResponseEntity.ok(users);
+    }
+
+    @PatchMapping("/{id}/password")
+    public ResponseEntity<Void> changePassword(
+            @PathVariable Long id,
+            @Valid @RequestBody PasswordChangeRequestDTO request
+    ) {
+        userService.changePassword(id, request.newPassword());
+        return ResponseEntity.noContent().build();
     }
 }
