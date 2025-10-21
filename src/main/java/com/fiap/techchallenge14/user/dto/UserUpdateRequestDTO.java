@@ -19,6 +19,10 @@ public record UserUpdateRequestDTO(
         @Size(min = 3, max = 100, message = "O endereco deve ter entre 3 e 100 caracteres")
         String address,
 
+        @NotBlank(message = "O login é obrigatório")
+        @Size(min = 4, max = 100, message = "O login deve ter entre 4 e 100 caracteres")
+        String login,
+
         @NotNull
         @RoleExists
         Long roleId

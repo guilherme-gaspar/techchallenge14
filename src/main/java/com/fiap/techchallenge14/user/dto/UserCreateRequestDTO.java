@@ -2,6 +2,7 @@ package com.fiap.techchallenge14.user.dto;
 
 import com.fiap.techchallenge14.role.validation.RoleExists;
 import com.fiap.techchallenge14.user.validation.UniqueEmail;
+import com.fiap.techchallenge14.user.validation.UniqueLogin;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,6 +25,11 @@ public record UserCreateRequestDTO(
         @NotBlank(message = "O endereco é obrigatório")
         @Size(min = 3, max = 100, message = "O endereco deve ter entre 3 e 100 caracteres")
         String address,
+
+        @NotBlank(message = "O login é obrigatório")
+        @Size(min = 4, max = 100, message = "O login deve ter entre 4 e 100 caracteres")
+        @UniqueLogin
+        String login,
 
         @NotNull
         @RoleExists

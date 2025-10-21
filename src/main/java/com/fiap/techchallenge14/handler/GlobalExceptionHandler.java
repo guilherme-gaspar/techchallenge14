@@ -1,5 +1,6 @@
 package com.fiap.techchallenge14.handler;
 
+import com.fiap.techchallenge14.exception.UserException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -16,6 +17,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleRuntime(RuntimeException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(UserException.class)
+    public ResponseEntity<String> handleUserException(UserException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -37,6 +37,7 @@ class UserControllerTest {
                 "TesteName",
                 "test@email.com",
                 "adress",
+                "login",
                 null,
                 null,
                 null,
@@ -52,6 +53,7 @@ class UserControllerTest {
                 "test@email.com",
                 "123456",
                 "address",
+                "login",
                 1L
         );
 
@@ -71,6 +73,7 @@ class UserControllerTest {
                 "test updated",
                 "updated@email.com",
                 "adress",
+                "login",
                 2L
         );
 
@@ -79,6 +82,7 @@ class UserControllerTest {
                 "test updated",
                 "updated@email.com",
                 "adress",
+                "login",
                 null,
                 null,
                 null,
