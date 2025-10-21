@@ -52,6 +52,7 @@ class UserServiceTest {
         user.setId(1L);
         user.setName("teste");
         user.setEmail("teste@email.com");
+        user.setLogin("login");
         user.setActive(true);
         user.setRole(role);
 
@@ -59,7 +60,8 @@ class UserServiceTest {
                 1L,
                 "teste",
                 "teste@email.com",
-                "ADMIN",
+                "address",
+                "login",
                 null,
                 null,
                 null,
@@ -70,7 +72,7 @@ class UserServiceTest {
 
     @Test
     void save_ShouldCreateUserSuccessfully() {
-        UserCreateRequestDTO dto = new UserCreateRequestDTO("teste", "teste@email.com", "123", "address", 1L);
+        UserCreateRequestDTO dto = new UserCreateRequestDTO("teste", "teste@email.com", "123", "address", "login", 1L);
 
         when(userMapper.toEntity(dto)).thenReturn(user);
         when(roleRepository.getReferenceById(1L)).thenReturn(role);
@@ -115,7 +117,7 @@ class UserServiceTest {
 
     @Test
     void update_ShouldUpdateUserSuccessfully() {
-        UserUpdateRequestDTO dto = new UserUpdateRequestDTO("teste Updated", "updated@mail.com", "address", 1L);
+        UserUpdateRequestDTO dto = new UserUpdateRequestDTO("teste Updated", "updated@mail.com", "address", "login", 1L);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(roleRepository.getReferenceById(1L)).thenReturn(role);
@@ -131,7 +133,7 @@ class UserServiceTest {
 
     @Test
     void update_ShouldThrowException_WhenUserNotFound() {
-        UserUpdateRequestDTO dto = new UserUpdateRequestDTO("Test", "t@test.com", "address", 1L);
+        UserUpdateRequestDTO dto = new UserUpdateRequestDTO("Test", "t@test.com", "address", "login", 1L);
 
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 

@@ -21,7 +21,7 @@ public class LoginService {
     private final UserRepository userRepository;
 
     public LoginResponseDTO login(LoginRequestDTO loginRequest) {
-        User user = authenticate(loginRequest.email(), loginRequest.password());
+        User user = authenticate(loginRequest.login(), loginRequest.password());
 
         updateLastLogin(user);
 
@@ -31,7 +31,7 @@ public class LoginService {
     }
 
     private User authenticate(String username, String password) {
-        return userRepository.findByEmailAndPassword(username, password)
+        return userRepository.findByLoginAndPassword(username, password)
                 .filter(User::getActive)
                 .orElseThrow(() -> new LoginException("Login ou senha inválidos"));
     }
