@@ -1,29 +1,36 @@
-version: "3.8"
+version: "3.9"
 
 services:
-
   app:
-    image: techchallenge14-app
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - postgres
     ports:
       - "8080:8080"
-      
+    networks:
+      - backend
+
   postgres:
     image: postgres:16
     container_name: postgres_db
     restart: always
     environment:
-      POSTGRES_USER: techchallege
-      POSTGRES_PASSWORD: techchallegeGP14
-      POSTGRES_DB: mydatabase
+      POSTGRES_USER: techchallenge
+      POSTGRES_PASSWORD: techchallengeGP14
+      POSTGRES_DB: techchallenge14
     ports:
       - "5432:5432"
     volumes:
-      - ./postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     networks:
-      - postgres_network
-      
-networks:
-  postgres_network:
-    driver: bridge
+      - backend
 
+volumes:
+  postgres_data:
+
+networks:
+  backend:
+    driver: bridge

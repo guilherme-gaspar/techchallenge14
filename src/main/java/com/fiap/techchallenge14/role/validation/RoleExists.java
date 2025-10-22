@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RoleExists {
 
-    String message() default "Role não encontrada para o ID informado";
+    String message() default "Tipo de usuário não encontrada para o ID informado";
 
     Class<?>[] groups() default {};
 
