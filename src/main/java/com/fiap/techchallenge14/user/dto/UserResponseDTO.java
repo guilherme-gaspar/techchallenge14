@@ -6,6 +6,8 @@ public record UserResponseDTO(
         Long id,
         String name,
         String email,
+        String address,
+        String login,
         LocalDateTime createdAt,
         LocalDateTime lastUpdatedAt,
         LocalDateTime lastLoginAt,

@@ -3,8 +3,9 @@ package com.fiap.techchallenge14.user.service;
 import com.fiap.techchallenge14.exception.UserException;
 import com.fiap.techchallenge14.role.model.Role;
 import com.fiap.techchallenge14.role.repository.RoleRepository;
-import com.fiap.techchallenge14.user.dto.UserRequestDTO;
+import com.fiap.techchallenge14.user.dto.UserCreateRequestDTO;
 import com.fiap.techchallenge14.user.dto.UserResponseDTO;
+import com.fiap.techchallenge14.user.dto.UserUpdateRequestDTO;
 import com.fiap.techchallenge14.user.mapper.UserMapper;
 import com.fiap.techchallenge14.user.model.User;
 import com.fiap.techchallenge14.user.repository.UserRepository;
@@ -13,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -26,12 +26,14 @@ public class UserService {
     private final UserMapper userMapper;
 
     @Transactional
-    public UserResponseDTO save(UserRequestDTO dto) {
-        User user = buildUserFromDTO(dto);
+    public UserResponseDTO save(UserCreateRequestDTO dto) {
+        User user = userMapper.toEntity(dto);
+
         Role role = roleRepository.getReferenceById(dto.roleId());
         user.setRole(role);
+
         User savedUser = userRepository.save(user);
-        log.info("User created with ID: {}", savedUser.getId());
+        log.info("Usuário criado com o ID: {}", savedUser.getId());
 
         return userMapper.toResponseDTO(savedUser);
     }
@@ -48,7 +50,7 @@ public class UserService {
         List<User> users = userRepository.findByNameContainingIgnoreCase(name);
 
         if (users.isEmpty()) {
-            throw new UserException("No users found with the name: " + name);
+            throw new UserException("Usuário nao encontrado com o nome: " + name);
         }
 
         return users.stream()
@@ -57,16 +59,28 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDTO update(Long id, UserRequestDTO dto) {
+    public UserResponseDTO update(Long id, UserUpdateRequestDTO dto) {
         User user = getUserById(id);
 
-        updateUserFromDTO(user, dto);
+        userRepository.findByEmail(dto.email())
+                .filter(existing -> !existing.getId().equals(id))
+                .ifPresent(existing -> {
+                    throw new UserException("E-mail já está em uso");
+                });
+
+        userRepository.findByLogin(dto.login())
+                .filter(existing -> !existing.getId().equals(id))
+                .ifPresent(existing -> {
+                    throw new UserException("Login já está em uso");
+                });
+
+        userMapper.updateEntityFromDto(dto, user);
+
         Role role = roleRepository.getReferenceById(dto.roleId());
         user.setRole(role);
-        user.setLastUpdatedAt(LocalDateTime.now());
 
         User updatedUser = userRepository.save(user);
-        log.info("User updated with ID: {}", updatedUser.getId());
+        log.info("Usuário atualizado com o ID: {}", updatedUser.getId());
 
         return userMapper.toResponseDTO(updatedUser);
     }
@@ -76,30 +90,27 @@ public class UserService {
         User user = getUserById(id);
 
         if (Boolean.FALSE.equals(user.getActive())) {
-            log.warn("Attempted to delete already inactive user with ID: {}", id);
+            log.warn("Esse usuário já está inativo, ID: {}", id);
             return;
         }
 
         user.setActive(false);
         userRepository.save(user);
 
-        log.info("User soft-deleted with ID: {}", id);
+        log.info("Usuário deletado logicamente com o ID: {}", id);
     }
 
     private User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new UserException("User not found with ID: " + id));
+                .orElseThrow(() -> new UserException("Usuário nao encontrado com o ID: " + id));
     }
 
-    private User buildUserFromDTO(UserRequestDTO dto) {
-        User user = new User();
-        updateUserFromDTO(user, dto);
-        return user;
-    }
+    @Transactional
+    public void changePassword(Long id, String newPassword) {
+        User user = getUserById(id);
+        user.setPassword(newPassword);
 
-    private void updateUserFromDTO(User user, UserRequestDTO dto) {
-        user.setName(dto.name());
-        user.setEmail(dto.email());
-        user.setPassword(dto.password());
+        userRepository.save(user);
+        log.info("Senha atualizada no usuário com o ID: {}", id);
     }
 }

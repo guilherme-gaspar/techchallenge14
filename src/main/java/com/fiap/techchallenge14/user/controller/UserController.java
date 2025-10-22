@@ -1,7 +1,9 @@
 package com.fiap.techchallenge14.user.controller;
 
-import com.fiap.techchallenge14.user.dto.UserRequestDTO;
+import com.fiap.techchallenge14.user.dto.PasswordChangeRequestDTO;
+import com.fiap.techchallenge14.user.dto.UserCreateRequestDTO;
 import com.fiap.techchallenge14.user.dto.UserResponseDTO;
+import com.fiap.techchallenge14.user.dto.UserUpdateRequestDTO;
 import com.fiap.techchallenge14.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,15 +21,15 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserCreateRequestDTO userRequestDTO) {
         UserResponseDTO createdUser = userService.save(userRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<UserResponseDTO> updateUser(
             @PathVariable Long id,
-            @Valid @RequestBody UserRequestDTO userRequestDTO) {
+            @Valid @RequestBody UserUpdateRequestDTO userRequestDTO) {
 
         UserResponseDTO updatedUser = userService.update(id, userRequestDTO);
         return ResponseEntity.ok(updatedUser);
@@ -46,5 +48,14 @@ public class UserController {
                 : userService.findAll();
 
         return ResponseEntity.ok(users);
+    }
+
+    @PatchMapping("/{id}/password")
+    public ResponseEntity<Void> changePassword(
+            @PathVariable Long id,
+            @Valid @RequestBody PasswordChangeRequestDTO request
+    ) {
+        userService.changePassword(id, request.newPassword());
+        return ResponseEntity.noContent().build();
     }
 }
