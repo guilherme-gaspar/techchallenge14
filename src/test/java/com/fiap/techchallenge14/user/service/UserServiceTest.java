@@ -7,13 +7,12 @@ import com.fiap.techchallenge14.role.repository.RoleRepository;
 import com.fiap.techchallenge14.user.dto.UserCreateRequestDTO;
 import com.fiap.techchallenge14.user.dto.UserResponseDTO;
 import com.fiap.techchallenge14.user.dto.UserUpdateRequestDTO;
-import com.fiap.techchallenge14.user.mapper.UserMapper;
+import com.fiap.techchallenge14.user.mapper.UserMapperImpl;
 import com.fiap.techchallenge14.user.model.User;
 import com.fiap.techchallenge14.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -32,18 +31,16 @@ class UserServiceTest {
     @Mock
     private RoleRepository roleRepository;
 
-    @Mock
-    private UserMapper userMapper;
-
-    @InjectMocks
     private UserService userService;
 
     private User user;
     private Role role;
-    private UserResponseDTO responseDTO;
 
     @BeforeEach
     void setup() {
+        UserMapperImpl userMapper = new UserMapperImpl();
+        userService = new UserService(userRepository, roleRepository, userMapper);
+
         role = new Role();
         role.setId(1L);
         role.setName(RoleType.CLIENT);
@@ -55,56 +52,42 @@ class UserServiceTest {
         user.setLogin("login");
         user.setActive(true);
         user.setRole(role);
-
-        responseDTO = new UserResponseDTO(
-                1L,
-                "teste",
-                "teste@email.com",
-                "address",
-                "login",
-                null,
-                null,
-                null,
-                true,
-                RoleType.CLIENT.name()
-        );
     }
 
     @Test
     void save_ShouldCreateUserSuccessfully() {
         UserCreateRequestDTO dto = new UserCreateRequestDTO("teste", "teste@email.com", "123", "address", "login", 1L);
 
-        when(userMapper.toEntity(dto)).thenReturn(user);
         when(roleRepository.getReferenceById(1L)).thenReturn(role);
-        when(userRepository.save(user)).thenReturn(user);
-        when(userMapper.toResponseDTO(user)).thenReturn(responseDTO);
+        when(userRepository.save(any(User.class))).thenReturn(user);
 
         UserResponseDTO result = userService.save(dto);
 
         assertEquals("teste", result.name());
-        verify(userRepository, times(1)).save(user);
-        verify(userMapper, times(1)).toEntity(dto);
+        assertEquals("teste@email.com", result.email());
+        assertEquals(RoleType.CLIENT.name(), result.roleName());
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
     void findAll_ShouldReturnUsers() {
         when(userRepository.findAll()).thenReturn(List.of(user));
-        when(userMapper.toResponseDTO(user)).thenReturn(responseDTO);
 
         List<UserResponseDTO> result = userService.findAll();
 
         assertEquals(1, result.size());
+        assertEquals(user.getEmail(), result.getFirst().email());
         verify(userRepository, times(1)).findAll();
     }
 
     @Test
     void findUserByName_ShouldReturnFilteredUsers() {
         when(userRepository.findByNameContainingIgnoreCase("teste")).thenReturn(List.of(user));
-        when(userMapper.toResponseDTO(user)).thenReturn(responseDTO);
 
         List<UserResponseDTO> result = userService.findUserByName("teste");
 
         assertEquals(1, result.size());
+        assertEquals("teste", result.getFirst().name());
         verify(userRepository).findByNameContainingIgnoreCase("teste");
     }
 
@@ -122,22 +105,108 @@ class UserServiceTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(roleRepository.getReferenceById(1L)).thenReturn(role);
         when(userRepository.save(user)).thenReturn(user);
-        when(userMapper.toResponseDTO(user)).thenReturn(responseDTO);
 
         UserResponseDTO result = userService.update(1L, dto);
 
         assertNotNull(result);
-        verify(userMapper).updateEntityFromDto(dto, user);
-        verify(userRepository).save(user);
+        assertEquals("teste Updated", result.name());
+        assertEquals("updated@mail.com", result.email());
+        assertEquals("login", result.login());
     }
 
     @Test
     void update_ShouldThrowException_WhenUserNotFound() {
         UserUpdateRequestDTO dto = new UserUpdateRequestDTO("Test", "t@test.com", "address", "login", 1L);
-
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThrows(UserException.class, () -> userService.update(99L, dto));
+    }
+
+    @Test
+    void update_ShouldThrowException_WhenEmailAlreadyInUse() {
+        UserUpdateRequestDTO dto = new UserUpdateRequestDTO(
+                "teste Updated",
+                "existing@email.com",
+                "newLogin",
+                "address",
+                1L
+        );
+
+        User otherUser = new User();
+        otherUser.setId(2L);
+        otherUser.setEmail("existing@email.com");
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(dto.email())).thenReturn(Optional.of(otherUser));
+
+        UserException exception = assertThrows(UserException.class, () -> userService.update(1L, dto));
+        assertEquals("E-mail já está em uso", exception.getMessage());
+    }
+
+    @Test
+    void update_ShouldThrowException_WhenLoginAlreadyInUse() {
+        UserUpdateRequestDTO dto = new UserUpdateRequestDTO(
+                "teste Updated",
+                "new@mail.com",
+                "existingLogin",
+                "address",
+                1L
+        );
+
+        User otherUser = new User();
+        otherUser.setId(2L);
+        otherUser.setLogin("existingLogin");
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(dto.email())).thenReturn(Optional.empty());
+        when(userRepository.findByLogin(dto.login())).thenReturn(Optional.of(otherUser));
+
+        UserException exception = assertThrows(UserException.class, () -> userService.update(1L, dto));
+        assertEquals("Login já está em uso", exception.getMessage());
+    }
+
+    @Test
+    void update_ShouldAllowSameEmailForSameUser() {
+        UserUpdateRequestDTO dto = new UserUpdateRequestDTO(
+                "teste Updated",
+                "teste@email.com",
+                "newLogin",
+                "address",
+                1L
+        );
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(dto.email())).thenReturn(Optional.of(user));
+        when(userRepository.findByLogin(dto.login())).thenReturn(Optional.empty());
+        when(roleRepository.getReferenceById(dto.roleId())).thenReturn(role);
+        when(userRepository.save(user)).thenReturn(user);
+
+        UserResponseDTO result = userService.update(1L, dto);
+
+        assertEquals("teste Updated", result.name());
+        assertEquals("teste@email.com", result.email());
+    }
+
+    @Test
+    void update_ShouldAllowSameLoginForSameUser() {
+        UserUpdateRequestDTO dto = new UserUpdateRequestDTO(
+                "teste Updated",
+                "new@mail.com",
+                "address",
+                "login",
+                1L
+        );
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(dto.email())).thenReturn(Optional.empty());
+        when(userRepository.findByLogin(dto.login())).thenReturn(Optional.of(user));
+        when(roleRepository.getReferenceById(dto.roleId())).thenReturn(role);
+        when(userRepository.save(user)).thenReturn(user);
+
+        UserResponseDTO result = userService.update(1L, dto);
+
+        assertEquals("teste Updated", result.name());
+        assertEquals("login", result.login());
     }
 
     @Test
