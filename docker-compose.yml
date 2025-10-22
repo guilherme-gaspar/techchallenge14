@@ -1,6 +1,13 @@
 version: "3.8"
 
 services:
+
+  app:
+    image: techchallenge14-app
+    build: .
+    ports:
+      - "8080:8080"
+      
   postgres:
     image: postgres:16
     container_name: postgres_db
@@ -15,7 +22,8 @@ services:
       - ./postgres_data:/var/lib/postgresql/data
     networks:
       - postgres_network
-
+      
 networks:
   postgres_network:
     driver: bridge
+
