@@ -11,13 +11,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class TokenAuthFilter extends OncePerRequestFilter {
 
     private static final String AUTH_HEADER = "Authorization";
     private static final String USERS_ENDPOINT = "/v1/users";
-    private static final String LOGIN_ENDPOINT = "/v1/login";
+    private static final List<String> PUBLIC_ENDPOINTS =
+            List.of("/v1/login", "/v3/api-docs", "/swagger-ui",
+                    "/webjars", "/swagger-resources");
 
     @Override
     protected void doFilterInternal(
@@ -46,7 +49,10 @@ public class TokenAuthFilter extends OncePerRequestFilter {
     }
 
     private boolean isPublicEndpoint(String path, String method) {
-        return path.equals(LOGIN_ENDPOINT) ||
-                (path.equals(USERS_ENDPOINT) && method.equalsIgnoreCase(HttpMethod.POST.name()));
+        if(path.equals(USERS_ENDPOINT) && (method.equalsIgnoreCase(HttpMethod.POST.name())))
+            return true;
+
+        return PUBLIC_ENDPOINTS.stream().anyMatch(path::startsWith) &&
+                (method.equalsIgnoreCase(HttpMethod.POST.name()) || method.equalsIgnoreCase(HttpMethod.GET.name()));
     }
 }
