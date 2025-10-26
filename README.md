@@ -18,7 +18,7 @@ Este projeto foi desenvolvido com foco em **Java moderno**, **boas práticas de 
 
 ### 🗃️ Banco de Dados
 - **PostgreSQL** – Banco de dados relacional utilizado
-- **JPA / Hibernate** – ORM para mapeamento objeto-relacional
+- **JPA** – Camada de persistência padronizada
 
 ### 🧩 Utilitários e Ferramentas de Suporte
 - **MapStruct** – Mapeamento entre entidades e DTOs
