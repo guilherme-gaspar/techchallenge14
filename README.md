@@ -70,14 +70,14 @@ docker compose up -d
 >    ```json
 >    {
 >      "name": "Guilherme Gaspar",
->      "email": "guilherme123@gmail.com",
->      "password": "testef123",
+>      "email": "guilherme@gmail.com",
+>      "password": "passwordforte123",
 >      "address": "Rua Exemplo, 123",
->      "login": "logs123f123in12s",
->      "roleId": 1
+>      "login": "guilhermeg",
+>      "roleId": 2
 >    }
 >    ```
- >    - `roleId = 1` → Cliente
+>    - `roleId = 1` → Cliente
 >    - `roleId = 2` → Dono de restaurante
 >
 > 
