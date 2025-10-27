@@ -5,6 +5,7 @@ import com.fiap.techchallenge14.user.dto.UserCreateRequestDTO;
 import com.fiap.techchallenge14.user.dto.UserResponseDTO;
 import com.fiap.techchallenge14.user.dto.UserUpdateRequestDTO;
 import com.fiap.techchallenge14.user.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("v1/users")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Authorization")
 public class UserController {
 
     private final UserService userService;
