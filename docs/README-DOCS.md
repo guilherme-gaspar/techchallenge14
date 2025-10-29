@@ -17,7 +17,7 @@ A collection contém todas as rotas da aplicação, organizadas nas seguintes se
 | ✏️ **Atualização de usuário** | Edição de dados de perfil e senha |
 | 🔍 **Recupera usuários** | Busca por nome ou listagem geral |
 | 🗑️ **Deleta usuário** | Remoção de registros |
-| 🔐 **Atualização de senha** | Alteração de senha com token JWT |
+| 🔐 **Atualização de senha** | Alteração de senha com token |
 
 ---
 
