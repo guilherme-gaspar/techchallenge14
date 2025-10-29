@@ -107,3 +107,24 @@ docker compose up -d
 >
 > Dessa forma, o fluxo de autenticação no Postman é totalmente automatizado:  
 > **cadastre-se → faça login → os endpoints autenticados funcionarão automaticamente.**
+
+---
+
+## 📬 Collection Postman — Testes de API
+
+Dentro do diretório [`docs`](./docs/collection.json), você encontrará a collection completa utilizada para testar a API do projeto.
+
+Essa collection contém **requisições válidas e inválidas**, incluindo **prints e exemplos visuais** de cada cenário de teste.
+
+A estrutura do diretório é organizada nas seguintes pastas:
+
+- 🧾 **cadastro/** — Requisições de criação de usuário
+- 🔄 **atualiza/** — Requisições de atualização de dados de usuário
+- 🗑️ **deleta/** — Requisições de exclusão de usuários
+- 🔍 **recupera/** — Requisições de busca e listagem de usuários
+- 🔐 **senha/** — Requisições específicas de atualização de senha
+
+Cada pasta contém:
+- Imagens com **prints das respostas** de sucesso e erro;
+
+👉 Para mais detalhes e exemplos visuais, consulte a documentação completa em [`docs/README-DOCS.md`](./docs/README-DOCS.md).
