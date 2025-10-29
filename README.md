@@ -103,7 +103,7 @@ docker compose up -d
 >    ```
 >
 > ⚙️ **Importante:** esse fluxo automatizado de autenticação **só funciona se você utilizar a collection Postman** disponível no repositório.  
-> A collection pode ser importada diretamente a partir do arquivo [`collection.json`](./collection.json) localizado na raiz do projeto.
+> A collection pode ser importada diretamente a partir do arquivo [`collection.json`](./docs/collection.json) localizado no diretório [`docs`](./docs).
 >
 > Dessa forma, o fluxo de autenticação no Postman é totalmente automatizado:  
 > **cadastre-se → faça login → os endpoints autenticados funcionarão automaticamente.**
