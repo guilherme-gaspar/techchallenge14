@@ -23,7 +23,7 @@ public record UserUpdateRequestDTO(
         @Size(min = 4, max = 100, message = "O login deve ter entre 4 e 100 caracteres")
         String login,
 
-        @NotNull
+        @NotNull(message = "O tipo de usuário é obrigatório")
         @RoleExists
         Long roleId
 ) {

@@ -41,7 +41,9 @@ public class TokenAuthFilter extends OncePerRequestFilter {
 
         if (token == null || !TokenStorage.isTokenValid(token)) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.getWriter().write("Token invalido ou nao fornecido.");
+            response.setContentType("application/json;charset=UTF-8");
+            String msg = "Acesso negado: token ausente ou inválido. Verifique o cabeçalho 'Authorization' e tente novamente.";
+            response.getWriter().write(msg);
             return;
         }
 

@@ -31,7 +31,7 @@ public record UserCreateRequestDTO(
         @UniqueLogin
         String login,
 
-        @NotNull
+        @NotNull(message = "O tipo de usuário é obrigatório")
         @RoleExists
         Long roleId
 ) {

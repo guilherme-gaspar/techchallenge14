@@ -15,7 +15,7 @@ public class RoleExistsValidator implements ConstraintValidator<RoleExists, Long
     @Override
     public boolean isValid(Long roleId, ConstraintValidatorContext context) {
         if (roleId == null) {
-            return false;
+            return true;
         }
         return roleRepository.existsById(roleId);
     }
