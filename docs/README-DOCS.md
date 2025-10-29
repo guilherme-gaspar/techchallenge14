@@ -1,4 +1,4 @@
-# 🧩 Documentação da API — TechChallenge14
+# 🧩 Documentação da API
 
 Este documento descreve os principais endpoints da API e como realizar testes rápidos diretamente pelo terminal utilizando **cURL**.
 
@@ -42,8 +42,13 @@ curl -X POST http://localhost:8080/v1/users   -H "Content-Type: application/json
   "id": 1,
   "name": "Usuário Teste",
   "email": "usuario.teste@teste.com",
+  "address": "Rua Teste 100",
   "login": "usuarioteste1",
-  "role": "CLIENT"
+  "createdAt": "2025-10-28T21:37:04.4101015",
+  "lastUpdatedAt": "2025-10-28T21:37:04.4101015",
+  "lastLoginAt": null,
+  "active": true,
+  "roleName": "CLIENT"
 }
 ```
 
@@ -62,7 +67,7 @@ curl -X POST http://localhost:8080/v1/users   -H "Content-Type: application/json
 
 **Resposta (400):**
 ```json
-{ "message": "E-mail inválido. Verifique o formato e tente novamente." }
+{ "email": "Formato de e-mail inválido" }
 ```
 
 ---
@@ -80,7 +85,7 @@ curl -X POST http://localhost:8080/v1/login   -H "Content-Type: application/json
 
 **Resposta (200):**
 ```json
-{ "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6..." }
+{ "token": "f2cea676-d06f-43a4-a7b2-06806535a0c6" }
 ```
 
 ### ❌ Erro — senha incorreta
@@ -92,9 +97,9 @@ curl -X POST http://localhost:8080/v1/login   -H "Content-Type: application/json
   }'
 ```
 
-**Resposta (401):**
-```json
-{ "message": "Credenciais inválidas. Verifique login e senha." }
+**Resposta (404):**
+```text
+Login ou senha inválidos
 ```
 
 ---
@@ -104,10 +109,10 @@ curl -X POST http://localhost:8080/v1/login   -H "Content-Type: application/json
 ### ✅ Sucesso
 
 ```bash
-curl -X PATCH http://localhost:8080/v1/users/1   -H "Authorization: Bearer <token>"   -H "Content-Type: application/json"   -d '{
-    "name": "Usuário Atualizado",
-    "email": "usuario.novo@teste.com",
-    "address": "Rua Nova 200",
+curl -X PATCH http://localhost:8080/v1/users/1   -H "Authorization: <token>"   -H "Content-Type: application/json"   -d '{
+    "name": "Nome Atualizado",
+    "email": "atualizado@teste.com",
+    "address": "Rua Atualizada",
     "login": "usuarioteste1",
     "roleId": 2
   }'
@@ -117,21 +122,27 @@ curl -X PATCH http://localhost:8080/v1/users/1   -H "Authorization: Bearer <toke
 ```json
 {
   "id": 1,
-  "name": "Usuário Atualizado",
-  "email": "usuario.novo@teste.com",
-  "role": "RESTAURANT_OWNER"
+  "name": "Nome Atualizado",
+  "email": "atualizado@teste.com",
+  "address": "Rua Atualizada",
+  "login": "usuarioteste1",
+  "createdAt": "2025-10-28T21:37:04.410102",
+  "lastUpdatedAt": "2025-10-28T21:37:04.410102",
+  "lastLoginAt": null,
+  "active": true,
+  "roleName": "RESTAURANT_OWNER"
 }
 ```
 
 ### ❌ Erro — token inválido
 
 ```bash
-curl -X PATCH http://localhost:8080/v1/users/1   -H "Authorization: Bearer token_invalido"   -H "Content-Type: application/json"   -d '{ "name": "Novo Nome" }'
+curl -X PATCH http://localhost:8080/v1/users/1   -H "Authorization: token_invalido"   -H "Content-Type: application/json"   -d '{ "name": "Novo Nome" }'
 ```
 
 **Resposta (401):**
-```json
-{ "message": "Acesso negado: token ausente ou inválido." }
+```text
+Acesso negado: token ausente ou inválido. Verifique o cabeçalho 'Authorization' e tente novamente.
 ```
 
 ---
@@ -141,16 +152,23 @@ curl -X PATCH http://localhost:8080/v1/users/1   -H "Authorization: Bearer token
 ### ✅ Sucesso
 
 ```bash
-curl -X GET "http://localhost:8080/v1/users?name=Usuário Teste"   -H "Authorization: Bearer <token>"
+curl -X GET "http://localhost:8080/v1/users?name=Guilherme"   -H "Authorization: <token>"
 ```
 
 **Resposta (200):**
 ```json
 [
   {
-    "id": 1,
-    "name": "Usuário Teste",
-    "email": "usuario.teste@teste.com"
+    "id": 2,
+    "name": "Guilherme",
+    "email": "guilherme.gaspar@teste.com",
+    "address": "Rua 5",
+    "login": "loginprincipal",
+    "createdAt": "2025-10-28T21:40:31.633351",
+    "lastUpdatedAt": "2025-10-28T21:40:33.694727",
+    "lastLoginAt": "2025-10-28T21:40:33.693077",
+    "active": true,
+    "roleName": "CLIENT"
   }
 ]
 ```
@@ -162,8 +180,8 @@ curl -X GET "http://localhost:8080/v1/users?name=Usuário Teste"
 ```
 
 **Resposta (401):**
-```json
-{ "message": "Token ausente. Faça login e tente novamente." }
+```text
+Acesso negado: token ausente ou inválido. Verifique o cabeçalho 'Authorization' e tente novamente.
 ```
 
 ---
@@ -173,7 +191,7 @@ curl -X GET "http://localhost:8080/v1/users?name=Usuário Teste"
 ### ✅ Sucesso
 
 ```bash
-curl -X DELETE http://localhost:8080/v1/users/1   -H "Authorization: Bearer <token>"
+curl -X DELETE http://localhost:8080/v1/users/1   -H "Authorization: <token>"
 ```
 
 **Resposta (204):**
@@ -184,12 +202,12 @@ curl -X DELETE http://localhost:8080/v1/users/1   -H "Authorization: Bearer <tok
 ### ❌ Erro — usuário inexistente
 
 ```bash
-curl -X DELETE http://localhost:8080/v1/users/999   -H "Authorization: Bearer <token>"
+curl -X DELETE http://localhost:8080/v1/users/999   -H "Authorization: <token>"
 ```
 
-**Resposta (404):**
-```json
-{ "message": "Usuário não encontrado." }
+**Resposta (400):**
+```text
+Usuário nao encontrado com o ID: 999
 ```
 
 ---
@@ -199,23 +217,25 @@ curl -X DELETE http://localhost:8080/v1/users/999   -H "Authorization: Bearer <t
 ### ✅ Sucesso
 
 ```bash
-curl -X PATCH http://localhost:8080/v1/users/1/password   -H "Authorization: Bearer <token>"   -H "Content-Type: application/json"   -d '{ "newPassword": "novaSenha123" }'
+curl -X PATCH http://localhost:8080/v1/users/1/password   -H "Authorization: <token>"   -H "Content-Type: application/json"   -d '{ "newPassword": "novaSenha123" }'
 ```
 
-**Resposta (200):**
-```json
-{ "message": "Senha atualizada com sucesso." }
+**Resposta (204):**
+```
+(no content)
 ```
 
 ### ❌ Erro — senha vazia
 
 ```bash
-curl -X PATCH http://localhost:8080/v1/users/1/password   -H "Authorization: Bearer <token>"   -H "Content-Type: application/json"   -d '{ "newPassword": "" }'
+curl -X PATCH http://localhost:8080/v1/users/1/password   -H "Authorization: <token>"   -H "Content-Type: application/json"   -d '{ "newPassword": "" }'
 ```
 
 **Resposta (400):**
 ```json
-{ "message": "A nova senha não pode ser vazia." }
+{
+  "newPassword": "A nova senha é obrigatória"
+}
 ```
 
 ---
