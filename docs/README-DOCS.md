@@ -11,13 +11,13 @@ A collection Postman completa está disponível em:
 
 A collection contém todas as rotas da aplicação, organizadas nas seguintes seções:
 
-| Grupo | Descrição |
-|--------|------------|
-| 🧾 **Cadastro de usuário** | Criação de novos usuários (válidos e inválidos) |
+| Grupo | Descrição                       |
+|--------|---------------------------------|
+| 🧾 **Cadastro de usuário** | Criação de novos usuários       |
 | ✏️ **Atualização de usuário** | Edição de dados de perfil e senha |
 | 🔍 **Recupera usuários** | Busca por nome ou listagem geral |
-| 🗑️ **Deleta usuário** | Remoção de registros |
-| 🔐 **Atualização de senha** | Alteração de senha com token |
+| 🗑️ **Deleta usuário** | Remoção de registros            |
+| 🔐 **Atualização de senha** | Alteração de senha com token    |
 
 ---
 
