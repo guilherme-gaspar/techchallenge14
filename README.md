@@ -55,7 +55,7 @@ docker compose up -d
 
 | Método     | Endpoint                  | Descrição                                    | Autenticação |
 |------------|---------------------------|----------------------------------------------|--------------|
-| **POST**   | `/v1/login`               | Realiza login e retorna o token JWT          | Não          |
+| **POST**   | `/v1/login`               | Realiza login e retorna o token              | Não          |
 | **POST**   | `/v1/users`               | Cria um novo usuário                         | Não          |
 | **GET**    | `/v1/users`               | Lista usuários ou busca por nome             | Sim          |
 | **PATCH**  | `/v1/users/{id}`          | Atualiza parcialmente os dados de um usuário | Sim          |
