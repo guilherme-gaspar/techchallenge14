@@ -112,9 +112,9 @@ docker compose up -d
 
 ## 📬 Collection Postman — Testes de API
 
-Dentro do diretório [`docs`](./docs/collection.json), você encontrará a collection completa utilizada para testar a API do projeto.
+Dentro do diretório [`docs`](./docs), você encontrará a [`collection`](./docs/collection.json) completa utilizada para testar a API do projeto e também os prints relacionadas as testes com a collection e testes com o swagger
 
-Essa collection contém **requisições válidas e inválidas**, incluindo **prints e exemplos visuais** de cada cenário de teste.
+Essa collection contém **requisições válidas e inválidas**. Nesse diretório de docs, inclui também **prints e exemplos visuais** de cada cenário de teste junto com os testes com swagger e postman.
 
 A estrutura do diretório é organizada nas seguintes pastas:
 
@@ -123,6 +123,7 @@ A estrutura do diretório é organizada nas seguintes pastas:
 - 🗑️ **deleta/** — Requisições de exclusão de usuários
 - 🔍 **recupera/** — Requisições de busca e listagem de usuários
 - 🔐 **senha/** — Requisições específicas de atualização de senha
+- 🧾 **swagger/** — Exemplos de requisições utilizando o Swagger
 
 Cada pasta contém:
 - Imagens com **prints das respostas** de sucesso e erro;

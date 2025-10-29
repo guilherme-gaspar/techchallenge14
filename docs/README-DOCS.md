@@ -5,6 +5,16 @@ Este documento descreve os principais endpoints da API e como realizar testes r�
 A collection Postman completa está disponível em:  
 📂 [`docs/collection.json`](./collection.json)
 
+Os prints de sucesso e erro utilizando o Postman estão disponíveis em:  
+📂 [`docs/atualiza`](./atualiza)
+📂 [`docs/cadastrao`](./cadastro)
+📂 [`docs/deleta`](./deleta)
+📂 [`docs/recupera`](./recupera)
+📂 [`docs/senha`](./senha)
+
+Os prints de sucesso e erro utilizando o Swagger estão disponíveis em:  
+📂 [`docs/swagger`](./swagger)
+
 ---
 
 ## 🚀 Estrutura da Collection
