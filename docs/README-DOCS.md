@@ -24,10 +24,10 @@ A collection contém todas as rotas da aplicação, organizadas nas seguintes se
 | Grupo | Descrição                       |
 |--------|---------------------------------|
 | 🧾 **Cadastro de usuário** | Criação de novos usuários       |
-| ✏️ **Atualização de usuário** | Edição de dados de perfil e senha |
+| ✏️ **Atualização de usuário** | Edição de dados do usuário      |
 | 🔍 **Recupera usuários** | Busca por nome ou listagem geral |
-| 🗑️ **Deleta usuário** | Remoção de registros            |
-| 🔐 **Atualização de senha** | Alteração de senha com token    |
+| 🗑️ **Deleta usuário** | Remoção de usuário              |
+| 🔐 **Atualização de senha** | Alteração de senha     |
 
 ---
 
