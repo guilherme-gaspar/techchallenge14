@@ -2,12 +2,13 @@ package com.fiap.techchallenge14.handler;
 
 import com.fiap.techchallenge14.exception.UserException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.ProblemDetail;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,17 +16,28 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> handleRuntime(RuntimeException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    public ProblemDetail handleRuntime(RuntimeException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setTitle("Recurso não encontrado");
+        problem.setType(URI.create("/problems/not-found"));
+        return problem;
     }
 
     @ExceptionHandler(UserException.class)
-    public ResponseEntity<String> handleUserException(UserException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    public ProblemDetail handleUserException(UserException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setTitle("Erro de Usuário");
+        problem.setType(URI.create("/problems/user-error"));
+        return problem;
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException ex) {
+    public ProblemDetail handleValidation(MethodArgumentNotValidException ex) {
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setTitle("Erro de Validação");
+        problem.setType(URI.create("/problems/validation-error"));
+        problem.setDetail("Um ou mais campos estão inválidos. Corrija e tente novamente.");
+
         Map<String, String> errors = new HashMap<>();
 
         ex.getBindingResult().getAllErrors().forEach(error -> {
@@ -34,6 +46,8 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, message);
         });
 
-        return ResponseEntity.badRequest().body(errors);
+        problem.setProperty("errors", errors);
+
+        return problem;
     }
 }
