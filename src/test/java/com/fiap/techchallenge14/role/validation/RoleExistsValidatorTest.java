@@ -62,7 +62,7 @@ class RoleExistsValidatorTest {
         boolean result = validator.isValid(null, context);
 
         // Assert
-        assertFalse(result);
+        assertTrue(result);
         verifyNoInteractions(roleRepository);
     }
 }

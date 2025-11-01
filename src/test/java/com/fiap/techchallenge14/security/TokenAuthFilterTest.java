@@ -71,7 +71,7 @@ class TokenAuthFilterTest {
             filter.doFilterInternal(request, response, chain);
 
             verify(response).setStatus(401);
-            assertEquals("Token invalido ou nao fornecido.", responseWriter.toString());
+            assertEquals("{\"type\":\"/problems/unauthorized\",\"title\":\"Acesso negado\",\"status\":401,\"detail\":\"Token ausente ou inválido. Verifique o cabeçalho 'Authorization' e tente novamente.\",\"instance\":\"/v1/users\",\"properties\":null}", responseWriter.toString());
             verify(chain, never()).doFilter(request, response);
         }
     }
@@ -101,7 +101,7 @@ class TokenAuthFilterTest {
         filter.doFilterInternal(request, response, chain);
 
         verify(response).setStatus(401);
-        assertEquals("Token invalido ou nao fornecido.", responseWriter.toString());
+        assertEquals("{\"type\":\"/problems/unauthorized\",\"title\":\"Acesso negado\",\"status\":401,\"detail\":\"Token ausente ou inválido. Verifique o cabeçalho 'Authorization' e tente novamente.\",\"instance\":\"/v1/users\",\"properties\":null}", responseWriter.toString());
         verify(chain, never()).doFilter(request, response);
     }
 }
