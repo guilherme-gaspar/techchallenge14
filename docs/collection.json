@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-                          "raw": "{\n  \"name\": \"Usuário Teste\",\n  \"email\": \"usuario@asdasdteste.com\",\n  \"password\": \"senha123\",\n  \"address\": \"Rua Teste 100\",\n  \"login\": \"usuarioteste1\",\n  \"roleId\": 1\n}",
+                          "raw": "{\n  \"name\": \"Usuário Teste\",\n  \"email\": \"usuario.teste@teste.com\",\n  \"password\": \"senha123\",\n  \"address\": \"Rua Teste 100\",\n  \"login\": \"usuarioteste1\",\n  \"roleId\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -172,7 +172,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Nome Atualizado\",\n  \"email\": \"atualizado@teste.com\",\n  \"address\": \"Rua Atualizada\",\n  \"login\": \"usuarioteste1\",\n  \"roleId\": 2\n}",
+                          "raw": "{\n  \"name\": \"Nome Atualizado\",\n  \"email\": \"atualizado@teste.com\",\n  \"address\": \"Rua Atualizada\",\n  \"login\": \"usuarioteste123\",\n  \"roleId\": 2\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -383,7 +383,7 @@
 							}
 						],
 						"url": {
-                          "raw": "http://localhost:8080/v1/users?name=Guilherme",
+                          "raw": "http://localhost:8080/v1/users?name=Usuário Teste",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -396,7 +396,7 @@
 							"query": [
 								{
 									"key": "name",
-                                  "value": "Guilherme"
+                                  "value": "Usuário Teste"
 								}
 							]
 						}
