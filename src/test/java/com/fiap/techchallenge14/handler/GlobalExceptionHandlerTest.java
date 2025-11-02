@@ -3,7 +3,7 @@ package com.fiap.techchallenge14.handler;
 import com.fiap.techchallenge14.exception.UserException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.ProblemDetail;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,8 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,20 +28,20 @@ class GlobalExceptionHandlerTest {
     void handleRuntime_ShouldReturnNotFound() {
         RuntimeException ex = new RuntimeException("Erro de runtime");
 
-        ResponseEntity<String> response = handler.handleRuntime(ex);
+        ProblemDetail response = handler.handleRuntime(ex);
 
-        assertEquals(404, response.getStatusCode().value());
-        assertEquals("Erro de runtime", response.getBody());
+        assertEquals(404, response.getStatus());
+        assertEquals("Erro de runtime", response.getDetail());
     }
 
     @Test
     void handleUserException_ShouldReturnBadRequest() {
         UserException ex = new UserException("Erro de usuário");
 
-        ResponseEntity<String> response = handler.handleUserException(ex);
+        ProblemDetail response = handler.handleUserException(ex);
 
-        assertEquals(400, response.getStatusCode().value());
-        assertEquals("Erro de usuário", response.getBody());
+        assertEquals(400, response.getStatus());
+        assertEquals("Erro de usuário", response.getDetail());
     }
 
     @Test
@@ -56,12 +55,17 @@ class GlobalExceptionHandlerTest {
         MethodArgumentNotValidException ex = mock(MethodArgumentNotValidException.class);
         when(ex.getBindingResult()).thenReturn(bindingResult);
 
-        ResponseEntity<Map<String, String>> response = handler.handleValidation(ex);
+        ProblemDetail response = handler.handleValidation(ex);
 
-        assertEquals(400, response.getStatusCode().value());
-        assertNotNull(response.getBody());
-        assertEquals(2, response.getBody().size());
-        assertEquals("Nome obrigatório", response.getBody().get("name"));
-        assertEquals("Email inválido", response.getBody().get("email"));
+        assertEquals(400, response.getStatus());
+        assertNotNull(response.getDetail());
+        assertNotNull(response.getProperties());
+        Object errorsObj = response.getProperties().get("errors");
+        assertNotNull(errorsObj);
+
+        Map<?, ?> errors = (Map<?, ?>) errorsObj;
+        assertEquals(2, errors.size());
+        assertTrue(errors.containsKey("name"));
+        assertTrue(errors.containsKey("email"));
     }
 }

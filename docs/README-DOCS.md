@@ -9,6 +9,7 @@ Os prints de sucesso e erro utilizando o Postman estão disponíveis em:
 📂 [`docs/atualiza`](./atualiza)
 📂 [`docs/cadastrao`](./cadastro)
 📂 [`docs/deleta`](./deleta)
+📂 [`docs/login`](./login)
 📂 [`docs/recupera`](./recupera)
 📂 [`docs/senha`](./senha)
 
