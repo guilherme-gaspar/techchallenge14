@@ -90,10 +90,16 @@ public class UserService {
     public List<UserResponseDTO> findUsers(String name) {
         var spec = UserSpecification.filterUsers(name);
 
-        return userRepository.findAll(spec)
+        List<UserResponseDTO> users = userRepository.findAll(spec)
                 .stream()
                 .map(userMapper::toResponseDTO)
                 .toList();
+
+        if (users.isEmpty()) {
+            throw new UserException("Usuário nao encontrado com o nome: " + name);
+        }
+
+        return users;
     }
 
     @Transactional

@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "51534f00-85ce-4484-9974-25405fc2fc9f",
-		"name": "TechChallenge14 - Completo",
+      "name": "TechChallenge14 - Projeto FIAP",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "3234578"
 	},
@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Usuário Teste\",\n  \"email\": \"usuario.teste@teste.com\",\n  \"password\": \"senha123\",\n  \"address\": \"Rua Teste 100\",\n  \"login\": \"usuarioteste1\",\n  \"roleId\": 1\n}",
+                          "raw": "{\n  \"name\": \"Usuário Teste\",\n  \"email\": \"usuario@asdasdteste.com\",\n  \"password\": \"senha123\",\n  \"address\": \"Rua Teste 100\",\n  \"login\": \"usuarioteste1\",\n  \"roleId\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -383,7 +383,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:8080/v1/users?name=Usuário Teste",
+                          "raw": "http://localhost:8080/v1/users?name=Guilherme",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -396,7 +396,7 @@
 							"query": [
 								{
 									"key": "name",
-									"value": "Usuário Teste"
+                                  "value": "Guilherme"
 								}
 							]
 						}
@@ -565,7 +565,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"newPassword\": \"1223123\"\n}",
+                          "raw": "{\n  \"newPassword\": \"6622226\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -602,7 +602,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"newPassword\": \"12\"\n}",
+                          "raw": "{\n  \"newPassword\": \"212\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -626,6 +626,55 @@
 					},
 					"response": []
 				}
+            ]
+        },
+      {
+        "name": "Login",
+        "item": [
+          {
+            "name": "❌ Login - Inválido",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "let jsonData = pm.response.json();",
+                    "pm.environment.set('authToken', jsonData.token);",
+                    "console.log('Token recebido:', jsonData.token);"
+                  ],
+                  "type": "text/javascript",
+                  "packages": {},
+                  "requests": {}
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"login\": \"naoexiste\",\n  \"password\": \"naoexiste\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "http://localhost:8080/v1/login",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                  "v1",
+                  "login"
+                ]
+              }
+            },
+            "response": []
+          }
 			]
 		},
 		{
