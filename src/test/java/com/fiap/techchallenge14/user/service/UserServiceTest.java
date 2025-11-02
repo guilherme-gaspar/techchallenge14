@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 import java.util.Optional;
@@ -67,35 +68,6 @@ class UserServiceTest {
         assertEquals("teste@email.com", result.email());
         assertEquals(RoleType.CLIENT.name(), result.roleName());
         verify(userRepository, times(1)).save(any(User.class));
-    }
-
-    @Test
-    void findAll_ShouldReturnUsers() {
-        when(userRepository.findAll()).thenReturn(List.of(user));
-
-        List<UserResponseDTO> result = userService.findAll();
-
-        assertEquals(1, result.size());
-        assertEquals(user.getEmail(), result.getFirst().email());
-        verify(userRepository, times(1)).findAll();
-    }
-
-    @Test
-    void findUserByName_ShouldReturnFilteredUsers() {
-        when(userRepository.findByNameContainingIgnoreCase("teste")).thenReturn(List.of(user));
-
-        List<UserResponseDTO> result = userService.findUserByName("teste");
-
-        assertEquals(1, result.size());
-        assertEquals("teste", result.getFirst().name());
-        verify(userRepository).findByNameContainingIgnoreCase("teste");
-    }
-
-    @Test
-    void findUserByName_ShouldThrowException_WhenNotFound() {
-        when(userRepository.findByNameContainingIgnoreCase("NotFound")).thenReturn(List.of());
-
-        assertThrows(UserException.class, () -> userService.findUserByName("NotFound"));
     }
 
     @Test
@@ -251,5 +223,46 @@ class UserServiceTest {
         when(userRepository.findById(50L)).thenReturn(Optional.empty());
 
         assertThrows(UserException.class, () -> userService.changePassword(50L, "newpass"));
+    }
+
+    @Test
+    void shouldReturnUsers_whenNameIsProvided() {
+        // given
+        when(userRepository.findAll(any(Specification.class))).thenReturn(List.of(user));
+
+        // when
+        List<UserResponseDTO> result = userService.findUsers("teste");
+
+        // then
+        assertEquals(1, result.size());
+        UserResponseDTO dto = result.getFirst();
+        assertEquals("teste", dto.name());
+        assertEquals("teste@email.com", dto.email());
+        assertEquals(RoleType.CLIENT.name(), dto.roleName());
+    }
+
+    @Test
+    void shouldReturnEmptyList_whenRepositoryReturnsEmpty() {
+        // given
+        when(userRepository.findAll(any(Specification.class))).thenReturn(List.of());
+
+        // when
+        List<UserResponseDTO> result = userService.findUsers("qualquer");
+
+        // then
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void shouldHandleNullNameParameter() {
+        // given
+        when(userRepository.findAll(any(Specification.class))).thenReturn(List.of(user));
+
+        // when
+        List<UserResponseDTO> result = userService.findUsers(null);
+
+        // then
+        assertEquals(1, result.size());
+        assertEquals("teste", result.getFirst().name());
     }
 }
