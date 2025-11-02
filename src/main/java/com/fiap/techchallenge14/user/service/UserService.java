@@ -9,6 +9,7 @@ import com.fiap.techchallenge14.user.dto.UserUpdateRequestDTO;
 import com.fiap.techchallenge14.user.mapper.UserMapper;
 import com.fiap.techchallenge14.user.model.User;
 import com.fiap.techchallenge14.user.repository.UserRepository;
+import com.fiap.techchallenge14.user.specification.UserSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,26 +37,6 @@ public class UserService {
         log.info("Usuário criado com o ID: {}", savedUser.getId());
 
         return userMapper.toResponseDTO(savedUser);
-    }
-
-    @Transactional(readOnly = true)
-    public List<UserResponseDTO> findAll() {
-        return userRepository.findAll().stream()
-                .map(userMapper::toResponseDTO)
-                .toList();
-    }
-
-    @Transactional(readOnly = true)
-    public List<UserResponseDTO> findUserByName(String name) {
-        List<User> users = userRepository.findByNameContainingIgnoreCase(name);
-
-        if (users.isEmpty()) {
-            throw new UserException("Usuário nao encontrado com o nome: " + name);
-        }
-
-        return users.stream()
-                .map(userMapper::toResponseDTO)
-                .toList();
     }
 
     @Transactional
@@ -103,6 +84,22 @@ public class UserService {
     private User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserException("Usuário nao encontrado com o ID: " + id));
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserResponseDTO> findUsers(String name) {
+        var spec = UserSpecification.filterUsers(name);
+
+        List<UserResponseDTO> users = userRepository.findAll(spec)
+                .stream()
+                .map(userMapper::toResponseDTO)
+                .toList();
+
+        if (users.isEmpty()) {
+            throw new UserException("Usuário nao encontrado com o nome: " + name);
+        }
+
+        return users;
     }
 
     @Transactional

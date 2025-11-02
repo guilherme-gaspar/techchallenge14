@@ -113,28 +113,28 @@ class UserControllerTest {
     void getUsers_ShouldReturnAllUsers_WhenNameIsNull() {
         List<UserResponseDTO> users = List.of(userResponse);
 
-        when(userService.findAll()).thenReturn(users);
+        when(userService.findUsers(null)).thenReturn(users);
 
         ResponseEntity<List<UserResponseDTO>> response = userController.getUsers(null);
 
         assertEquals(200, response.getStatusCode().value());
+        assertNotNull(response.getBody());
         assertEquals(1, response.getBody().size());
-        verify(userService, times(1)).findAll();
-        verify(userService, never()).findUserByName(anyString());
+        verify(userService, times(1)).findUsers(null);
     }
 
     @Test
     void getUsers_ShouldFilterByName() {
         List<UserResponseDTO> users = List.of(userResponse);
 
-        when(userService.findUserByName("test")).thenReturn(users);
+        when(userService.findUsers("test")).thenReturn(users);
 
         ResponseEntity<List<UserResponseDTO>> response = userController.getUsers("test");
 
         assertEquals(200, response.getStatusCode().value());
+        assertNotNull(response.getBody());
         assertEquals(1, response.getBody().size());
-        verify(userService, times(1)).findUserByName("test");
-        verify(userService, never()).findAll();
+        verify(userService, times(1)).findUsers("test");
     }
 
     @Test

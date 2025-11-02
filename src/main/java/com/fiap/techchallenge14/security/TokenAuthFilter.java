@@ -1,5 +1,6 @@
 package com.fiap.techchallenge14.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fiap.techchallenge14.login.storage.TokenStorage;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -7,10 +8,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 
 @Component
@@ -18,9 +21,12 @@ public class TokenAuthFilter extends OncePerRequestFilter {
 
     private static final String AUTH_HEADER = "Authorization";
     private static final String USERS_ENDPOINT = "/v1/users";
-    private static final List<String> PUBLIC_ENDPOINTS =
-            List.of("/v1/login", "/v3/api-docs", "/swagger-ui",
-                    "/webjars", "/swagger-resources");
+    private static final List<String> PUBLIC_ENDPOINTS = List.of(
+            "/v1/login", "/v3/api-docs", "/swagger-ui",
+            "/webjars", "/swagger-resources"
+    );
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected void doFilterInternal(
@@ -40,10 +46,14 @@ public class TokenAuthFilter extends OncePerRequestFilter {
         String token = request.getHeader(AUTH_HEADER);
 
         if (token == null || !TokenStorage.isTokenValid(token)) {
+            ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+            problem.setTitle("Acesso negado");
+            problem.setType(URI.create("/problems/unauthorized"));
+            problem.setDetail("Token ausente ou inválido. Verifique o cabeçalho 'Authorization' e tente novamente.");
+            problem.setInstance(URI.create(request.getRequestURI()));
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.setContentType("application/json;charset=UTF-8");
-            String msg = "Acesso negado: token ausente ou inválido. Verifique o cabeçalho 'Authorization' e tente novamente.";
-            response.getWriter().write(msg);
+            response.setContentType("application/problem+json;charset=UTF-8");
+            objectMapper.writeValue(response.getWriter(), problem);
             return;
         }
 
@@ -51,10 +61,11 @@ public class TokenAuthFilter extends OncePerRequestFilter {
     }
 
     private boolean isPublicEndpoint(String path, String method) {
-        if(path.equals(USERS_ENDPOINT) && (method.equalsIgnoreCase(HttpMethod.POST.name())))
+        if (path.equals(USERS_ENDPOINT) && method.equalsIgnoreCase(HttpMethod.POST.name()))
             return true;
 
-        return PUBLIC_ENDPOINTS.stream().anyMatch(path::startsWith) &&
-                (method.equalsIgnoreCase(HttpMethod.POST.name()) || method.equalsIgnoreCase(HttpMethod.GET.name()));
+        return PUBLIC_ENDPOINTS.stream().anyMatch(path::startsWith)
+                && (method.equalsIgnoreCase(HttpMethod.POST.name())
+                || method.equalsIgnoreCase(HttpMethod.GET.name()));
     }
 }

@@ -45,10 +45,7 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> getUsers(@RequestParam(required = false) String name) {
-        List<UserResponseDTO> users = (name != null && !name.trim().isEmpty())
-                ? userService.findUserByName(name)
-                : userService.findAll();
-
+        List<UserResponseDTO> users = userService.findUsers(name);
         return ResponseEntity.ok(users);
     }
 
