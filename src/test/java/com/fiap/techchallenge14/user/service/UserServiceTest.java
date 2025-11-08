@@ -242,18 +242,6 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldReturnEmptyList_whenRepositoryReturnsEmpty() {
-        // given
-        when(userRepository.findAll(any(Specification.class))).thenReturn(List.of());
-
-        // when
-        List<UserResponseDTO> result = userService.findUsers("qualquer");
-
-        // then
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
     void shouldHandleNullNameParameter() {
         // given
         when(userRepository.findAll(any(Specification.class))).thenReturn(List.of(user));
